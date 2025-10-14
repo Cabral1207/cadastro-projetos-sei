@@ -1,0 +1,22 @@
+[
+    {
+        "matricula": "admin",
+        "senha": "admin"
+    },
+    {
+        "matricula": "kaline",
+        "senha": "123"
+    },
+    {
+        "matricula": "raimundo",
+        "senha": "123"
+    },
+    {
+        "matricula": "KALINE2",
+        "senha": "123"
+    },
+    {
+        "matricula": "arthur",
+        "senha": "123"
+    }
+]

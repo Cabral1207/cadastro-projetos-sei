@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %} Login {% endblock %}
+
+{% block conteudo %}
+
+<h2>Login</h2>
+<form id="loginForm" method="post" action="/login">
+    <input type="text" name="matricula" id="matricula" placeholder="Matrícula" maxlength="12" required>
+    <input type="password" name="senha" id="senha" placeholder="Senha" required>
+    <button type="submit">Entrar</button>
+</form>
+<p id="mensagem"></p>
+<p>Não tem conta? <a href="/cadastro">Cadastre-se aqui</a></p>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+{% endblock %}

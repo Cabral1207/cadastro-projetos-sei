@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Usuário</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Cadastro de Usuário</h2>
+        <form id="cadastroForm">
+            <input type="text" id="matricula" placeholder="Matrícula (12 dígitos)" maxlength="12" required>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <button type="submit">Cadastrar</button>
+        </form>
+        <p id="mensagem"></p>
+        <p>Já tem uma conta? <a href="{{ url_for('login') }}"">Faça login</a></p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("cadastroForm");
+            const matriculaInput = document.getElementById("matricula");
+            const senhaInput = document.getElementById("senha");
+            const mensagem = document.getElementById("mensagem");
+
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const matricula = matriculaInput.value.trim();
+                const senha = senhaInput.value.trim();
+
+                const somenteNumeros = /^\d+$/;
+
+                if (matricula === "" || senha === "") {
+                    mensagem.textContent = "Preencha todos os campos.";
+                    return;
+                }
+
+                if (matricula.length !== 12 || !somenteNumeros.test(matricula)) {
+                    mensagem.textContent = "A matrícula deve conter exatamente 12 números.";
+                    return;
+                }
+
+                let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+                const jaExiste = usuarios.some(usuario => usuario.matricula === matricula);
+
+                if (jaExiste) {
+                    mensagem.textContent = "Essa matrícula já está cadastrada. Faça login.";
+                    return;
+                }
+
+                usuarios.push({ matricula, senha });
+                localStorage.setItem("usuarios", JSON.stringify(usuarios));
+                window.location.href = "login.html";
+            });
+        });
+    </script>
+</body>
+</html>
