@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Projeto</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+</head>
+<body class="editar-projeto">
+    <div class="form-container">
+        <h2>Editar Projeto</h2>
+
+        <!-- Nome do projeto (somente leitura) -->
+        <input type="text" id="nomeProjeto" placeholder="Nome do Projeto" readonly><br>
+
+        <!-- Lista de alunos (somente leitura) -->
+        <textarea id="nomesAlunos" placeholder="Alunos" rows="6" readonly></textarea><br>
+
+        <!-- Descrição editável -->
+        <textarea id="descricaoProjeto" placeholder="Digite a descrição do projeto" rows="6"></textarea><br>
+
+        <!-- Botão Salvar -->
+        <button onclick="salvarDescricao()">Salvar Descrição</button>
+    </div>
+
+    <div class="voltar-container" style="margin: 15px 0;">
+        <a class="voltar" href="{{ url_for('projetos.cadastro_projeto') }}">← Voltar para Projetos</a>
+    </div>
+
+    <script>
+        let projetoAtual = null;
+
+        // Carrega o projeto selecionado pelo botão "Editar"
+        function carregarProjeto() {
+            const idSelecionado = localStorage.getItem("projetoSelecionadoID");
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            projetoAtual = projetos.find(p => p.id === idSelecionado);
+
+            if (!projetoAtual) {
+                alert("Projeto não encontrado!");
+                window.location.href = "projetos.html";
+                return;
+            }
+
+            document.getElementById("nomeProjeto").value = projetoAtual.nome;
+            document.getElementById("nomesAlunos").value = projetoAtual.alunos.join("\n");
+            document.getElementById("descricaoProjeto").value = projetoAtual.descricao || "";
+        }
+
+        // Salva a descrição no localStorage
+        function salvarDescricao() {
+            const descricao = document.getElementById("descricaoProjeto").value.trim();
+            projetoAtual.descricao = descricao;
+
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            const index = projetos.findIndex(p => p.id === projetoAtual.id);
+            projetos[index] = projetoAtual;
+            localStorage.setItem("projetos", JSON.stringify(projetos));
+
+            alert("Descrição salva com sucesso!");
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarProjeto);
+    </script>
+</body>
+</html>
