@@ -28,19 +28,19 @@ Este projeto foi idealizado e desenvolvido com dedicação por:
 
 ---
 
-## 👩‍💻 **Emilly**  
+## 👩‍💻 **[Emilly Cabral de Oliveira](https://www.instagram.com/emillycabral__)**  
 Responsável pela construção e suporte das funcionalidades principais.  
 Sua atenção aos detalhes e compromisso foram essenciais para o sucesso do sistema.
 
 ---
 
-## 👩‍💻 **Mikaele**  
+## 👩‍💻 **[Mikaele Lopes dos Santos](https://www.instagram.com/mikaelelopess_/)**  
 Contribuiu intensamente para a organização do fluxo do sistema e estruturação do projeto.  
 Seu empenho garantiu uma experiência fluida e prática para os usuários.
 
 ---
 
-## 👩‍💻 **Nilzah**  
+## 👩‍💻 **[Nilzah Haelly Severiano de Miranda](https://www.instagram.com/nilzahhaelly_)**  
 Atuou no aprimoramento e estabilidade do sistema, sempre buscando melhorias.  
 Sua participação foi fundamental para assegurar a eficiência e qualidade do projeto.
 
