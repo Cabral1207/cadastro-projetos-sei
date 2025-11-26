@@ -10,4 +10,7 @@ def create_app():
 
     from .projetos import bp as bp_projetos
     app.register_blueprint(bp_projetos)
+
+    from .usuarios import bp as bp_usuarios
+    app.register_blueprint(bp_usuarios)
     return app

@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
 </head>
+
 <body>
     <div class="container">
+        <h1>alerando login para ese</h1>
         <h2>Login</h2>
         <form id="loginForm">
             <input type="text" id="matricula" placeholder="Matrícula" maxlength="12" required>
@@ -14,7 +17,7 @@
             <button type="submit">Entrar</button>
         </form>
         <p id="mensagem"></p>
-        <p>Não tem conta? <a href="cadastro.html">Cadastre-se aqui</a></p>
+        <p>Não tem conta? <a href="{{url_for('usuarios.cadastro')}}">Cadastre-se aqui</a></p>
     </div>
 
     <script>
@@ -45,4 +48,5 @@
 
 
 </body>
+
 </html>
