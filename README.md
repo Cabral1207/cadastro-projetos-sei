@@ -34,7 +34,7 @@ Sua atenção aos detalhes e compromisso foram essenciais para o sucesso do sist
 
 ---
 
-## 👩‍💻 **Mikaela**  
+## 👩‍💻 **Mikaele**  
 Contribuiu intensamente para a organização do fluxo do sistema e estruturação do projeto.  
 Seu empenho garantiu uma experiência fluida e prática para os usuários.
 
