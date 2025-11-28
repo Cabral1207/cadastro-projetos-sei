@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes do Projeto - Professor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="detalhes-projeto">
+
+    <div class="display-container">
+        <h2>Detalhes do Projeto</h2>
+
+        <div id="infoProjeto"></div>
+
+        <button onclick="voltar()" style="margin-top:20px;">
+            ← Voltar
+        </button>
+    </div>
+
+    <script>
+        function carregarDetalhes() {
+            const idSelecionado = localStorage.getItem("projetoSelecionadoID");
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+
+            const projeto = projetos.find(p => p.id === idSelecionado);
+
+            if (!projeto) {
+                document.getElementById("infoProjeto").innerHTML = "<p>Projeto não encontrado.</p>";
+                return;
+            }
+
+            if (!projeto.etapas) projeto.etapas = [];
+            if (!projeto.concluidas) projeto.concluidas = [];
+
+            let etapasHTML = "";
+            if (projeto.concluidas.length === 0) {
+                etapasHTML = "<p>Nenhuma etapa concluída.</p>";
+            } else {
+                etapasHTML = "<ul>";
+                projeto.concluidas.forEach(et => {
+                    etapasHTML += `<li><strong>${et.nomeEtapa}</strong> - ${et.responsavel} - ${et.duracao}</li>`;
+                });
+                etapasHTML += "</ul>";
+            }
+
+            document.getElementById("infoProjeto").innerHTML = `
+                <h3>${projeto.nome}</h3>
+
+                <h4>Descrição:</h4>
+                <p>${projeto.descricao || "Nenhuma descrição adicionada."}</p>
+
+                <h4>Alunos Participantes:</h4>
+                <ul>
+                    ${projeto.alunos.map(a => `<li>${a}</li>`).join("")}
+                </ul>
+
+                <h4>Etapas Concluídas:</h4>
+                ${etapasHTML}
+            `;
+        }
+
+        function voltar() {
+            window.location.href = "tela-professor.html";
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarDetalhes);
+    </script>
+</body>
+</html>

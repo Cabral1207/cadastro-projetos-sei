@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Projetos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="projetos">
+
+    <div class="form-container">
+        <h2>Criar Novo Projeto</h2>
+        <input type="text" id="nomeProjeto" placeholder="Nome do Projeto">
+        <textarea id="nomesAlunos" placeholder="Digite os nomes dos alunos, um por linha" rows="6"></textarea>
+
+        <button onclick="salvarProjeto()">Salvar Projeto</button>
+        <button onclick="window.location.href='login.html'" style="margin-top:10px;">← Voltar para a tela inicial</button>
+    </div>
+
+    <div class="display-container">
+        <h2>Projetos Salvos</h2>
+        <div id="listaProjetos"></div>
+    </div>
+
+    <script>
+        const usuarioLogado = localStorage.getItem("usuarioLogado");
+
+        function gerarID() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        }
+
+        function salvarProjeto() {
+            const nome = document.getElementById("nomeProjeto").value.trim();
+            const alunosText = document.getElementById("nomesAlunos").value.trim();
+
+            if (!nome || !alunosText) {
+                alert("Preencha todos os campos.");
+                return;
+            }
+
+            const alunos = alunosText.split("\n").map(a => a.trim()).filter(Boolean);
+            const novoProjeto = {
+                id: gerarID(),
+                nome,
+                alunos,
+                dono: usuarioLogado,
+                descricao: "",
+                etapas: [],
+                concluidas: []
+            };
+
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            projetos.push(novoProjeto);
+            localStorage.setItem("projetos", JSON.stringify(projetos));
+
+            document.getElementById("nomeProjeto").value = "";
+            document.getElementById("nomesAlunos").value = "";
+
+            carregarProjetos();
+        }
+
+        function carregarProjetos() {
+            const container = document.getElementById("listaProjetos");
+            container.innerHTML = "";
+
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            const projetosUsuario = projetos.filter(p => p.dono === usuarioLogado);
+
+            projetosUsuario.forEach(projeto => {
+                const div = document.createElement("div");
+                div.className = "projeto-item";
+                div.innerHTML = `
+                    <h3>${projeto.nome}</h3>
+                    <p>${projeto.alunos.length} aluno(s)</p>
+                    <button class="btnEditar">Editar</button>
+                    <button class="btnEtapas" style="margin-left:5px;">Adicionar Etapas</button>
+                    <button class="btnApagar" style="margin-left:5px; background-color:#dc3545;">Apagar</button>
+                `;
+
+                div.querySelector(".btnEditar").addEventListener("click", () => {
+                    localStorage.setItem("projetoSelecionadoID", projeto.id);
+                    window.location.href = "editar-projeto.html";
+                });
+
+                div.querySelector(".btnEtapas").addEventListener("click", () => {
+                    localStorage.setItem("projetoSelecionadoID", projeto.id);
+                    window.location.href = "etapas-projetos.html";
+                });
+
+                div.querySelector(".btnApagar").addEventListener("click", () => {
+                    if (confirm("Deseja realmente apagar este projeto?")) {
+                        const todosProjetos = JSON.parse(localStorage.getItem("projetos")) || [];
+                        const index = todosProjetos.findIndex(p => p.id === projeto.id);
+                        if (index > -1) {
+                            todosProjetos.splice(index, 1);
+                            localStorage.setItem("projetos", JSON.stringify(todosProjetos));
+                            carregarProjetos();
+                        }
+                    }
+                });
+
+                container.appendChild(div);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarProjetos);
+    </script>
+</body>
+</html>

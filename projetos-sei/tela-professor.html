@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Tela do Professor</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body class="projetos-professor">
+
+    <div class="display-container">
+        <h2>Projetos Cadastrados (Somente Professor)</h2>
+        <div id="listaProjetosProfessor"></div>
+
+        <button onclick="window.location.href='login.html'" style="margin-top: 20px;">
+            ← Voltar para a tela inicial
+        </button>
+    </div>
+
+    <script>
+        function carregarProjetosProfessor() {
+            const container = document.getElementById("listaProjetosProfessor");
+            container.innerHTML = "";
+
+            // Todos os projetos, independente do usuário
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+
+            projetos.forEach(projeto => {
+                const div = document.createElement("div");
+                div.className = "projeto-item";
+
+                div.innerHTML = `
+                    <h3>${projeto.nome}</h3>
+                    <p>${projeto.alunos.length} aluno(s)</p>
+                    <button class="btnDetalhes">Ver Detalhes</button>
+                `;
+
+                div.querySelector(".btnDetalhes").addEventListener("click", () => {
+                    localStorage.setItem("projetoSelecionadoID", projeto.id);
+                    window.location.href = "projeto-detalhes-professor.html";
+                });
+
+                container.appendChild(div);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarProjetosProfessor);
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Etapas do Projeto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="etapas-projeto">
+
+    <div style="display:flex; justify-content:space-between; padding:40px; gap:20px;">
+
+        <!-- Formulário de adicionar etapas -->
+        <div class="form-container" style="flex:1;">
+            <h2>Etapas do Projeto</h2>
+            <p><strong>Projeto:</strong> <span id="nomeProjeto"></span></p>
+
+            <input type="text" id="nomeEtapa" placeholder="Nome da Etapa">
+            <input type="text" id="responsavel" placeholder="Responsável">
+            <input type="text" id="duracao" placeholder="Duração (ex: 2 dias, 3h)">
+            <button onclick="adicionarEtapa()">Adicionar Etapa</button>
+            <button onclick="irParaConcluidas()" style="margin-top:10px;">Visualizar Etapas Concluídas</button>
+            <button onclick="voltarParaProjetos()" style="margin-top:10px;">← Voltar para Projetos</button>
+        </div>
+
+        <!-- Lista de etapas pendentes -->
+        <div class="display-container" style="flex:1;">
+            <h2>Etapas Pendentes</h2>
+            <div id="listaEtapas"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const usuarioLogado = localStorage.getItem("usuarioLogado");
+        let projetoAtual = null;
+
+        function carregarProjeto() {
+            const idSelecionado = localStorage.getItem("projetoSelecionadoID");
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            projetoAtual = projetos.find(p => p.id === idSelecionado && p.dono === usuarioLogado);
+
+            if (!projetoAtual) {
+                alert("Projeto não encontrado!");
+                window.location.href = "projetos.html";
+                return;
+            }
+
+            document.getElementById("nomeProjeto").textContent = projetoAtual.nome;
+            if (!projetoAtual.etapas) projetoAtual.etapas = [];
+            if (!projetoAtual.concluidas) projetoAtual.concluidas = [];
+            carregarEtapas();
+        }
+
+        function salvarProjetoAtual() {
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            const index = projetos.findIndex(p => p.id === projetoAtual.id);
+            projetos[index] = projetoAtual;
+            localStorage.setItem("projetos", JSON.stringify(projetos));
+        }
+
+        function adicionarEtapa() {
+            const nomeEtapa = document.getElementById("nomeEtapa").value.trim();
+            const responsavel = document.getElementById("responsavel").value.trim();
+            const duracao = document.getElementById("duracao").value.trim();
+
+            if (!nomeEtapa || !responsavel || !duracao) {
+                alert("Preencha todos os campos da etapa.");
+                return;
+            }
+
+            projetoAtual.etapas.push({ nomeEtapa, responsavel, duracao });
+            salvarProjetoAtual();
+
+            document.getElementById("nomeEtapa").value = "";
+            document.getElementById("responsavel").value = "";
+            document.getElementById("duracao").value = "";
+
+            carregarEtapas();
+        }
+
+        function concluirEtapa(index) {
+            const etapa = projetoAtual.etapas.splice(index, 1)[0];
+            projetoAtual.concluidas.push(etapa);
+            salvarProjetoAtual();
+            carregarEtapas();
+        }
+
+        function removerEtapa(index) {
+            projetoAtual.etapas.splice(index, 1);
+            salvarProjetoAtual();
+            carregarEtapas();
+        }
+
+        function carregarEtapas() {
+            const container = document.getElementById("listaEtapas");
+            container.innerHTML = "";
+
+            projetoAtual.etapas.forEach((etapa, i) => {
+                const div = document.createElement("div");
+                div.className = "projeto-item";
+                div.innerHTML = `
+                    <strong>${etapa.nomeEtapa}</strong> - ${etapa.responsavel} - ${etapa.duracao}
+                    <button style="background:#28a745; margin-left:5px;" onclick="concluirEtapa(${i})">Concluída</button>
+                    <button style="background:#dc3545; margin-left:5px;" onclick="removerEtapa(${i})">Remover</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function irParaConcluidas() { window.location.href = "etapas-concluidas.html"; }
+        function voltarParaProjetos() { window.location.href = "projetos.html"; }
+
+        document.addEventListener("DOMContentLoaded", carregarProjeto);
+    </script>
+</body>
+</html>
