@@ -1,6 +1,6 @@
 from flask import flash, redirect, render_template, request
 
-from models import Usuario
+from app.usuarios.models import Usuario
 from . import bp
 
 @bp.route("/cadastro", methods=["GET", "POST"])
@@ -15,3 +15,12 @@ def cadastro():
         flash("Usuário já cadastrado")
         return redirect("cadastro")
     return render_template("cadastro-2.html")
+
+@bp.route("/detalhes_professor", methods=["GET", "POST"])
+def detalhes_professor():
+    return render_template("projeto-detalhes-professor.html")
+
+
+@bp.route("/professor", methods=["GET", "POST"])
+def home_professor():
+    return render_template("tela-professor.html")

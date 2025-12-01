@@ -1,31 +1,25 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Projetos</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-</head>
-<body class="projetos">
+{% extends 'base.html' %}
+{% block title %} Projetos {% endblock %}
+
+{% block conteudo %}
+
+<div class="projetos">
     <div class="form-container">
         <h2>Criar Novo Projeto</h2>
         <input type="text" id="nomeProjeto" placeholder="Nome do Projeto">
         <textarea id="nomesAlunos" placeholder="Digite os nomes dos alunos, um por linha" rows="6"></textarea>
-        
-        <!-- Botão Salvar -->
-        <button onclick="salvarProjeto()">Salvar Projeto</button>
-        
-        <!-- Botão Voltar (embaixo do salvar, mas dentro da caixa) -->
-        <button onclick="window.location.href='login.html'" style="margin-top: 10px;">
-            ← Voltar para a tela inicial
-        </button>
-    </div>
 
+        <button onclick="salvarProjeto()">Salvar Projeto</button>
+        <button onclick="voltar()" style="margin-top:10px;">← Voltar para a tela inicial</button>
+    </div>
     <div class="display-container">
         <h2>Projetos Salvos</h2>
         <div id="listaProjetos"></div>
     </div>
-
+</div>
     <script>
+        const usuarioLogado = localStorage.getItem("usuarioLogado");
+
         function gerarID() {
             return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
         }
@@ -44,7 +38,10 @@
                 id: gerarID(),
                 nome,
                 alunos,
-                descricao: ""
+                dono: usuarioLogado,
+                descricao: "",
+                etapas: [],
+                concluidas: []
             };
 
             const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
@@ -62,28 +59,49 @@
             container.innerHTML = "";
 
             const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            const projetosUsuario = projetos.filter(p => p.dono === usuarioLogado);
 
-            projetos.forEach(projeto => {
+            projetosUsuario.forEach(projeto => {
                 const div = document.createElement("div");
                 div.className = "projeto-item";
-
                 div.innerHTML = `
                     <h3>${projeto.nome}</h3>
                     <p>${projeto.alunos.length} aluno(s)</p>
                     <button class="btnEditar">Editar</button>
+                    <button class="btnEtapas" style="margin-left:5px;">Adicionar Etapas</button>
+                    <button class="btnApagar" style="margin-left:5px; background-color:#dc3545;">Apagar</button>
                 `;
 
-                const btnEditar = div.querySelector(".btnEditar");
-                btnEditar.addEventListener("click", () => {
+                div.querySelector(".btnEditar").addEventListener("click", () => {
                     localStorage.setItem("projetoSelecionadoID", projeto.id);
-                    window.location.href = "{{url_for('projetos.editar_projeto')}}";
+                    window.location.href = "{{ url_for('projetos.editar_projeto') }}";
+                });
+
+                div.querySelector(".btnEtapas").addEventListener("click", () => {
+                    localStorage.setItem("projetoSelecionadoID", projeto.id);
+                    window.location.href = "{{ url_for('projetos.etapas') }}";
+                });
+
+                div.querySelector(".btnApagar").addEventListener("click", () => {
+                    if (confirm("Deseja realmente apagar este projeto?")) {
+                        const todosProjetos = JSON.parse(localStorage.getItem("projetos")) || [];
+                        const index = todosProjetos.findIndex(p => p.id === projeto.id);
+                        if (index > -1) {
+                            todosProjetos.splice(index, 1);
+                            localStorage.setItem("projetos", JSON.stringify(todosProjetos));
+                            carregarProjetos();
+                        }
+                    }
                 });
 
                 container.appendChild(div);
             });
         }
 
+        function voltar(){
+            window.location.href="{{ url_for('auth.home') }}"
+        }
+
         document.addEventListener("DOMContentLoaded", carregarProjetos);
     </script>
-</body>
-</html>
+    {% endblock %}

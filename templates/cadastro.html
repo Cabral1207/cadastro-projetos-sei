@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Cadastro de Usuário</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -14,46 +14,36 @@
             <button type="submit">Cadastrar</button>
         </form>
         <p id="mensagem"></p>
-        <p>Já tem uma conta? <a href="{{ url_for('login') }}">Faça login</a></p>
+        <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("cadastroForm");
-            const matriculaInput = document.getElementById("matricula");
-            const senhaInput = document.getElementById("senha");
+        document.getElementById("cadastroForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const matricula = document.getElementById("matricula").value.trim();
+            const senha = document.getElementById("senha").value.trim();
             const mensagem = document.getElementById("mensagem");
+            const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
 
-            form.addEventListener("submit", function (e) {
-                e.preventDefault();
+            // Validação: somente números e 12 dígitos
+            const matriculaValida = /^\d{12}$/.test(matricula);
+            if (!matriculaValida) {
+                mensagem.textContent = "A matrícula deve conter exatamente 12 números.";
+                return;
+            }
 
-                const matricula = matriculaInput.value.trim();
-                const senha = senhaInput.value.trim();
+            // Verifica se matrícula já existe
+            if (usuarios.some(u => u.matricula === matricula)) {
+                mensagem.textContent = "Matrícula já cadastrada.";
+                return;
+            }
 
-                const somenteNumeros = /^\d+$/;
+            // Adiciona novo usuário
+            usuarios.push({ matricula, senha });
+            localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
-                if (matricula === "" || senha === "") {
-                    mensagem.textContent = "Preencha todos os campos.";
-                    return;
-                }
-
-                if (matricula.length !== 12 || !somenteNumeros.test(matricula)) {
-                    mensagem.textContent = "A matrícula deve conter exatamente 12 números.";
-                    return;
-                }
-
-                let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-                const jaExiste = usuarios.some(usuario => usuario.matricula === matricula);
-
-                if (jaExiste) {
-                    mensagem.textContent = "Essa matrícula já está cadastrada. Faça login.";
-                    return;
-                }
-
-                usuarios.push({ matricula, senha });
-                localStorage.setItem("usuarios", JSON.stringify(usuarios));
-                window.location.href = "login.html";
-            });
+            // Redireciona para login
+            window.location.href = "login.html";
         });
     </script>
 </body>

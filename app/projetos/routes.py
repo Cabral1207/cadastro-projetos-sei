@@ -10,3 +10,11 @@ def cadastro_projeto():
 def editar_projeto():
     print("alguma coisa")
     return render_template("editar-projeto.html")
+
+@bp.route("/etapas")
+def etapas():
+    return render_template("etapas-projetos.html")
+
+@bp.route("/etapas_concluidas")
+def etapas_concluidas():
+    return render_template("etapas-concluidas.html")

@@ -22,5 +22,9 @@
     {
         "matricula": "123456789110",
         "senha": "12345"
+    },
+    {
+        "matricula": "teste",
+        "senha": "teste"
     }
 ]

@@ -1,6 +1,6 @@
 import json
 import os
-USERS_FILE = os.path.join(os.path.dirname(__file__), '.', 'database', 'usuarios.json')
+USERS_FILE = os.path.join(os.path.dirname(__file__), 'database', 'usuarios.json')
 
 class Usuario:
     def __init__(self, matricula, senha):
@@ -12,6 +12,10 @@ class Usuario:
             'matricula': self.matricula,
             'senha': self.senha
         }
+
+    def __str__(self):
+        return f"Usuário: {self.matricula}"
+
     @staticmethod
     def load_all_users():
         print(os.path.exists(USERS_FILE))
