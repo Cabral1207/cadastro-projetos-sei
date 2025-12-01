@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes do Projeto - Professor{% endblock %}
+
+{% block conteudo %}
+
+<div class="detalhes-projeto">
+    <h2>Detalhes do Projeto</h2>
+    <div id="infoProjeto"></div>
+
+    <button onclick="voltar()" style="margin-top:20px;">
+        Voltar
+    </button>
+</div>
+
+<script>
+    function carregarDetalhes() {
+        const idSelecionado = localStorage.getItem("projetoSelecionado");
+        const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+        const projeto = projetos.find(p => p.id == idSelecionado);
+
+        if (!projeto) {
+            document.getElementById("infoProjeto").innerHTML = "<p>Projeto não encontrado.</p>";
+            return;
+        }
+
+        let etapasHTML = "";
+        let etapas_concluidas = projeto.etapas-concluidas || [];
+
+        if (etapas_concluidas.length == 0) {
+            etapasHTML = "<p>Nenhuma etapa concluída.</p>";
+        } else {
+            etapasHTML = "<ul>";
+            etapas_concluidas.forEach(et => {
+                etapasHTML += `<li><strong>${et.nomeEtapa}</strong> - ${et.responsavel} - ${et.duracao}</li>`;
+            });
+            etapasHTML += "</ul>";
+        }
+
+        document.getElementById("infoProjeto").innerHTML = `
+            <h3>${projeto.nome}</h3>
+            <p><b>Descrição:</b> ${projeto.descricao || "Nenhuma descrição adicionada."}</p>
+            <p><b>Alunos Participantes:</b></p>
+            <ul>
+                ${(projeto.alunos || []).map(a => `<li>${a}</li>`).join("")}
+            </ul>
+
+            <h3>Etapas Concluídas:</h3>
+            ${etapasHTML}
+        `;
+    }
+
+    function voltar() {
+        window.location.href = "{{ url_for('usuario.home_professor') }}";
+    }
+
+    document.addEventListener("DOMContentLoaded", carregarDetalhes);
+    
+</script>
+
+{% endblock conteudo %}

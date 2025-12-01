@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %} Etapas Concluidas {% endblock %}
+
+{% block conteudo %}
+
+<div class="etapas-projeto">
+
+    <div class="display-container">
+        <h2>Etapas Concluídas</h2>
+        <div id="listaConcluidas"></div>
+        <button onclick="voltar()" style="margin-top:10px;">← Voltar</button>
+    </div>
+</div>
+    <script>
+        const usuarioLogado = localStorage.getItem("usuarioLogado");
+        const idSelecionado = localStorage.getItem("projetoSelecionadoID");
+        let projetoAtual = null;
+
+        function carregarConcluidas() {
+            let projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            projetoAtual = projetos.find(p => p.id === idSelecionado && p.dono === usuarioLogado);
+
+            if (!projetoAtual) {
+                alert("Projeto não encontrado!");
+                window.location.href = "projetos.html";
+                return;
+            }
+
+            const container = document.getElementById("listaConcluidas");
+            container.innerHTML = "";
+
+            if (!projetoAtual.concluidas || projetoAtual.concluidas.length === 0) {
+                container.innerHTML = "<p>Nenhuma etapa concluída.</p>";
+                return;
+            }
+
+            projetoAtual.concluidas.forEach((et, i) => {
+                const div = document.createElement("div");
+                div.className = "projeto-item";
+                div.innerHTML = `
+                    <strong>${et.nomeEtapa}</strong> - ${et.responsavel} - ${et.duracao}
+                    <button style="background:#dc3545; margin-left:5px;" onclick="removerEtapa(${i})">Remover</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function removerEtapa(index) {
+            if (!confirm("Deseja realmente remover esta etapa concluída?")) return;
+
+            projetoAtual.concluidas.splice(index, 1);
+
+            // Atualiza o localStorage
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            const projIndex = projetos.findIndex(p => p.id === projetoAtual.id);
+            projetos[projIndex] = projetoAtual;
+            localStorage.setItem("projetos", JSON.stringify(projetos));
+
+            carregarConcluidas();
+        }
+
+        function voltar() {
+            window.location.href = "{{ url_for('projetos.etapas') }}";
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarConcluidas);
+    </script>
+
+{% endblock %}

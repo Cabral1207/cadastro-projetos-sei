@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>alerando login para ese</h1>
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="matricula" placeholder="Matrícula" maxlength="12" required>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+        </form>
+        <p id="mensagem"></p>
+        <p>Não tem conta? <a href="{{url_for('usuarios.cadastro')}}">Cadastre-se aqui</a></p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("loginForm");
+            const mensagem = document.getElementById("mensagem");
+
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const matricula = document.getElementById("matricula").value.trim();
+                const senha = document.getElementById("senha").value.trim();
+
+                const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+                const usuarioEncontrado = usuarios.find(user =>
+                    user.matricula === matricula && user.senha === senha
+                );
+
+                if (usuarioEncontrado) {
+                    window.location.href = "projetos.html";
+                } else {
+                    mensagem.textContent = "Matrícula ou senha incorretos.";
+                }
+            });
+        });
+    </script>
+
+
+</body>
+
+</html>

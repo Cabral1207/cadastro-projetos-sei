@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Etapas do Projeto</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body.etapas-projeto {
+            background-color: #0e1b35;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+            height: 100vh;
+        }
+
+        .form-container {
+            background-color: #1c2e4a;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button.add {
+            background-color: #1e90ff;
+            color: white;
+        }
+
+        .etapa-card {
+            background-color: #243b5e;
+            margin-top: 12px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: 0.3s;
+        }
+
+        .etapa-card span {
+            color: white;
+            font-size: 15px;
+            word-break: break-word;
+            max-width: calc(100% - 24px);
+        }
+
+
+        .btn-excluir {
+            background: none;
+            border: none;
+            color: #1e90ff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 12px;
+            transition: color 0.2s;
+        }
+
+        .btn-excluir:hover {
+            color: #1c7ed6;
+        }
+
+
+
+
+        .voltar-container {
+            margin-top: 25px;
+        }
+
+        .voltar {
+            display: block;
+            text-align: center;
+            background-color: #1e90ff;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .voltar:hover {
+            background-color: #1c7ed6;
+        }
+    </style>
+</head>
+<body class="etapas-projeto">
+    <div class="form-container">
+        <h2>Etapas do Projeto</h2>
+
+        <input type="text" id="nomeProjeto" readonly><br>
+
+        <input type="text" id="novaEtapa" placeholder="Digite o nome da nova etapa">
+        <button class="add" onclick="adicionarEtapa()">Adicionar</button>
+
+        <div id="listaEtapas"></div>
+
+        <div class="voltar-container">
+            <a class="voltar" href="editar_projeto.html">← Voltar</a>
+        </div>
+    </div>
+
+    <script>
+        let projetoAtual = null;
+
+        function carregarProjeto() {
+            const idSelecionado = localStorage.getItem("projetoSelecionadoID");
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            projetoAtual = projetos.find(p => p.id === idSelecionado);
+
+            if (!projetoAtual) {
+                alert("Projeto não encontrado!");
+                window.location.href = "projetos.html";
+                return;
+            }
+
+            document.getElementById("nomeProjeto").value = projetoAtual.nome;
+            atualizarLista();
+        }
+
+        function adicionarEtapa() {
+            const etapa = document.getElementById("novaEtapa").value.trim();
+            if (etapa === "") {
+                alert("Digite uma etapa!");
+                return;
+            }
+
+            if (!projetoAtual.etapas) projetoAtual.etapas = [];
+            projetoAtual.etapas.push(etapa);
+
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            const index = projetos.findIndex(p => p.id === projetoAtual.id);
+            projetos[index] = projetoAtual;
+            localStorage.setItem("projetos", JSON.stringify(projetos));
+
+            document.getElementById("novaEtapa").value = "";
+            atualizarLista();
+        }
+
+        function excluirEtapa(index) {
+            if (confirm("Tem certeza que deseja excluir esta etapa?")) {
+                projetoAtual.etapas.splice(index, 1);
+
+                const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+                const idx = projetos.findIndex(p => p.id === projetoAtual.id);
+                projetos[idx] = projetoAtual;
+                localStorage.setItem("projetos", JSON.stringify(projetos));
+
+                atualizarLista();
+            }
+        }
+
+        function atualizarLista() {
+        const lista = document.getElementById("listaEtapas");
+        lista.innerHTML = "";
+
+            if (!projetoAtual.etapas || projetoAtual.etapas.length === 0) {
+                lista.innerHTML = "<p style='text-align:center;color:#ccc;'>Nenhuma etapa adicionada ainda.</p>";
+            return;
+            }
+
+                projetoAtual.etapas.forEach((etapa, i) => {
+                const div = document.createElement("div");
+                div.classList.add("etapa-card");
+
+                const nome = document.createElement("span");
+                nome.textContent = etapa;
+
+                const btn = document.createElement("button");
+                btn.textContent = "×";
+                btn.title = "Excluir etapa";
+                btn.classList.add("btn-excluir");
+                btn.onclick = () => excluirEtapa(i);
+
+                div.appendChild(nome);
+                div.appendChild(btn);
+                lista.appendChild(div);
+            });
+        }
+
+
+        document.addEventListener("DOMContentLoaded", carregarProjeto);
+    </script>
+</body>
+</html>

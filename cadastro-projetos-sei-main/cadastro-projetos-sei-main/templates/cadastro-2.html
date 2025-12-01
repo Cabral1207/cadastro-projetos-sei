@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %} Login {% endblock %}
+
+{% block conteudo %}
+
+<h2>Cadastro de Usuário</h2>
+<form id="cadastroForm" method="post" action="/cadastro">
+    <input type="text" name="matricula" id="matricula" placeholder="Matrícula (12 dígitos)" maxlength="12" required>
+    <input type="password" name="senha" id="senha" placeholder="Senha" required>
+    <button type="submit">Cadastrar</button>
+</form>
+<p id="mensagem"></p>
+<p>Já tem uma conta? <a href="{{ url_for('auth.login') }}">Faça login</a></p>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class=" alert alert-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+{% endblock %}

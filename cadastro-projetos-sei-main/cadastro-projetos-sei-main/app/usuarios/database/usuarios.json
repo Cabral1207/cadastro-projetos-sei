@@ -1,0 +1,34 @@
+[
+    {
+        "matricula": "admin",
+        "senha": "admin"
+    },
+    {
+        "matricula": "kaline",
+        "senha": "123"
+    },
+    {
+        "matricula": "raimundo",
+        "senha": "123"
+    },
+    {
+        "matricula": "KALINE2",
+        "senha": "123"
+    },
+    {
+        "matricula": "arthur",
+        "senha": "123"
+    },
+    {
+        "matricula": "123456789110",
+        "senha": "12345"
+    },
+    {
+        "matricula": "teste",
+        "senha": "teste"
+    },
+    {
+        "matricula": "123456789099",
+        "senha": "123"
+    }
+]

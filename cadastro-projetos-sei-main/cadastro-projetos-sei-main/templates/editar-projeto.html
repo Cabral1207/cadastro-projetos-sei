@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %} Editar Projetos {% endblock %}
+{% block conteudo %}
+<div class="editar-projeto">
+    <div class="form-container">
+        <h2>Editar Projeto</h2>
+
+        <input type="text" id="nomeProjeto" placeholder="Nome do Projeto" readonly><br>
+        <textarea id="nomesAlunos" placeholder="Alunos" rows="6" readonly></textarea><br>
+        <textarea id="descricaoProjeto" placeholder="Digite a descrição do projeto" rows="6"></textarea><br>
+
+        <button onclick="salvarDescricao()">Salvar Descrição</button>
+        <button onclick="voltarParaProjetos()" style="margin-top:10px;">← Voltar para Projetos</button>
+    </div>
+</div>
+    <script>
+        const usuarioLogado = localStorage.getItem("usuarioLogado");
+        let projetoAtual = null;
+
+        function carregarProjeto() {
+            const idSelecionado = localStorage.getItem("projetoSelecionadoID");
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            projetoAtual = projetos.find(p => p.id === idSelecionado && p.dono === usuarioLogado);
+
+            if (!projetoAtual) {
+                alert("Projeto não encontrado!");
+                window.location.href = "{{ url_for('projetos.cadastro_projeto') }}";
+                return;
+            }
+
+            document.getElementById("nomeProjeto").value = projetoAtual.nome;
+            document.getElementById("nomesAlunos").value = projetoAtual.alunos.join("\n");
+            document.getElementById("descricaoProjeto").value = projetoAtual.descricao || "";
+        }
+
+        function salvarDescricao() {
+            const descricao = document.getElementById("descricaoProjeto").value.trim();
+            projetoAtual.descricao = descricao;
+
+            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+            const index = projetos.findIndex(p => p.id === projetoAtual.id);
+            projetos[index] = projetoAtual;
+            localStorage.setItem("projetos", JSON.stringify(projetos));
+
+            alert("Descrição salva com sucesso!");
+        }
+
+        function voltarParaProjetos() {
+            window.location.href = "{{ url_for('projetos.cadastro_projeto') }}";
+        }
+
+        document.addEventListener("DOMContentLoaded", carregarProjeto);
+    </script>
+{% endblock %}
