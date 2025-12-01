@@ -17,54 +17,54 @@
         <div id="listaProjetos"></div>
     </div>
 </div>
-    <script>
-        const usuarioLogado = localStorage.getItem("usuarioLogado");
+<script>
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
 
-        function gerarID() {
-            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    function gerarID() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    function salvarProjeto() {
+        const nome = document.getElementById("nomeProjeto").value.trim();
+        const alunosText = document.getElementById("nomesAlunos").value.trim();
+
+        if (!nome || !alunosText) {
+            alert("Preencha todos os campos.");
+            return;
         }
 
-        function salvarProjeto() {
-            const nome = document.getElementById("nomeProjeto").value.trim();
-            const alunosText = document.getElementById("nomesAlunos").value.trim();
+        const alunos = alunosText.split("\n").map(a => a.trim()).filter(Boolean);
+        const novoProjeto = {
+            id: gerarID(),
+            nome,
+            alunos,
+            dono: usuarioLogado,
+            descricao: "",
+            etapas: [],
+            concluidas: []
+        };
 
-            if (!nome || !alunosText) {
-                alert("Preencha todos os campos.");
-                return;
-            }
+        const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+        projetos.push(novoProjeto);
+        localStorage.setItem("projetos", JSON.stringify(projetos));
 
-            const alunos = alunosText.split("\n").map(a => a.trim()).filter(Boolean);
-            const novoProjeto = {
-                id: gerarID(),
-                nome,
-                alunos,
-                dono: usuarioLogado,
-                descricao: "",
-                etapas: [],
-                concluidas: []
-            };
+        document.getElementById("nomeProjeto").value = "";
+        document.getElementById("nomesAlunos").value = "";
 
-            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
-            projetos.push(novoProjeto);
-            localStorage.setItem("projetos", JSON.stringify(projetos));
+        carregarProjetos();
+    }
 
-            document.getElementById("nomeProjeto").value = "";
-            document.getElementById("nomesAlunos").value = "";
+    function carregarProjetos() {
+        const container = document.getElementById("listaProjetos");
+        container.innerHTML = "";
 
-            carregarProjetos();
-        }
+        const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
+        const projetosUsuario = projetos.filter(p => p.dono === usuarioLogado);
 
-        function carregarProjetos() {
-            const container = document.getElementById("listaProjetos");
-            container.innerHTML = "";
-
-            const projetos = JSON.parse(localStorage.getItem("projetos")) || [];
-            const projetosUsuario = projetos.filter(p => p.dono === usuarioLogado);
-
-            projetosUsuario.forEach(projeto => {
-                const div = document.createElement("div");
-                div.className = "projeto-item";
-                div.innerHTML = `
+        projetosUsuario.forEach(projeto => {
+            const div = document.createElement("div");
+            div.className = "projeto-item";
+            div.innerHTML = `
                     <h3>${projeto.nome}</h3>
                     <p>${projeto.alunos.length} aluno(s)</p>
                     <button class="btnEditar">Editar</button>
@@ -72,36 +72,36 @@
                     <button class="btnApagar" style="margin-left:5px; background-color:#dc3545;">Apagar</button>
                 `;
 
-                div.querySelector(".btnEditar").addEventListener("click", () => {
-                    localStorage.setItem("projetoSelecionadoID", projeto.id);
-                    window.location.href = "{{ url_for('projetos.editar_projeto') }}";
-                });
-
-                div.querySelector(".btnEtapas").addEventListener("click", () => {
-                    localStorage.setItem("projetoSelecionadoID", projeto.id);
-                    window.location.href = "{{ url_for('projetos.etapas') }}";
-                });
-
-                div.querySelector(".btnApagar").addEventListener("click", () => {
-                    if (confirm("Deseja realmente apagar este projeto?")) {
-                        const todosProjetos = JSON.parse(localStorage.getItem("projetos")) || [];
-                        const index = todosProjetos.findIndex(p => p.id === projeto.id);
-                        if (index > -1) {
-                            todosProjetos.splice(index, 1);
-                            localStorage.setItem("projetos", JSON.stringify(todosProjetos));
-                            carregarProjetos();
-                        }
-                    }
-                });
-
-                container.appendChild(div);
+            div.querySelector(".btnEditar").addEventListener("click", () => {
+                localStorage.setItem("projetoSelecionadoID", projeto.id);
+                window.location.href = "{{ url_for('projetos.editar_projeto') }}";
             });
-        }
 
-        function voltar(){
-            window.location.href="{{ url_for('auth.home') }}"
-        }
+            div.querySelector(".btnEtapas").addEventListener("click", () => {
+                localStorage.setItem("projetoSelecionadoID", projeto.id);
+                window.location.href = "{{ url_for('projetos.etapas') }}";
+            });
 
-        document.addEventListener("DOMContentLoaded", carregarProjetos);
-    </script>
-    {% endblock %}
+            div.querySelector(".btnApagar").addEventListener("click", () => {
+                if (confirm("Deseja realmente apagar este projeto?")) {
+                    const todosProjetos = JSON.parse(localStorage.getItem("projetos")) || [];
+                    const index = todosProjetos.findIndex(p => p.id === projeto.id);
+                    if (index > -1) {
+                        todosProjetos.splice(index, 1);
+                        localStorage.setItem("projetos", JSON.stringify(todosProjetos));
+                        carregarProjetos();
+                    }
+                }
+            });
+
+            container.appendChild(div);
+        });
+    }
+
+    function voltar() {
+        window.location.href = "{{ url_for('auth.home') }}"
+    }
+
+    document.addEventListener("DOMContentLoaded", carregarProjetos);
+</script>
+{% endblock %}

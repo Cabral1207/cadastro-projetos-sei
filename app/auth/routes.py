@@ -23,7 +23,7 @@ def login():
                 "senha": senha
             }
             print("sessão iniciada")
-            return redirect(url_for("usuario.home_professor"))
+            return redirect(url_for("projetos.cadastro_projeto"))
     return render_template("login-sem-js.html")
 
 @bp.route("/")
